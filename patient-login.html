@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HealthBridge - Patient Login</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="container" style="max-width:480px; padding:30px 20px 60px;">
+    <div class="logo-bar"><div class="logo-mark">✚</div><div class="logo-name">HealthBridge</div></div>
+    
+    <div style="padding:20px 4px 0;">
+      <button class="back-btn" onclick="window.location.href='index.html'">← Back</button>
+      
+      <div class="page-title">Patient Login</div>
+      <div class="page-sub">We'll send a code to your phone — no password needed!</div>
+
+      <div class="hb-card" style="margin-top:24px;">
+
+        <div id="otp-step-1">
+          <div style="font-size:2.5rem;text-align:center;margin-bottom:20px;">📱</div>
+          <div class="mb-3">
+            <label class="hb-label">Your Phone Number</label>
+            <div style="display:flex;gap:10px;">
+              <select class="hb-input" style="width:110px;flex-shrink:0;">
+                <option>🇮🇳 +91</option>
+              </select>
+              <input class="hb-input" type="tel" id="phone-input" maxlength="10" placeholder="9876 543 210" style="flex:1;"/>
+            </div>
+          </div>
+          <button class="btn-hb-primary" onclick="validatePhoneAndShowOTP()">Send OTP →</button>
+        </div>
+
+        <div id="otp-step-2" style="display:none;">
+          <div style="font-size:2.5rem;text-align:center;margin-bottom:12px;">🔐</div>
+          <div style="text-align:center;font-size:1rem;font-weight:700;color:var(--muted);margin-bottom:20px;">
+            Enter the 6-digit code sent to<br/>
+            <strong style="color:var(--text);" id="display-phone">+91 98765 43210</strong>
+          </div>
+          
+          <div class="otp-row mb-3">
+            <input class="otp-box" maxlength="1" oninput="otpFwd(this,0)"/>
+            <input class="otp-box" maxlength="1" oninput="otpFwd(this,1)"/>
+            <input class="otp-box" maxlength="1" oninput="otpFwd(this,2)"/>
+            <input class="otp-box" maxlength="1" oninput="otpFwd(this,3)"/>
+            <input class="otp-box" maxlength="1" oninput="otpFwd(this,4)"/>
+            <input class="otp-box" maxlength="1" oninput="otpFwd(this,5)"/>
+          </div>
+          
+          <p style="text-align:center;font-size:.9rem;font-weight:600;color:var(--muted);margin-bottom:20px;">
+            Didn't get it? <span class="link-text">Resend OTP</span>
+          </p>
+          
+          <button class="btn-hb-primary" onclick="window.location.href='patient-profile-setup.html'">Verify & Sign In →</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+<script>
+  // 1. Prevent typing letters into the phone number field
+  document.getElementById('phone-input').addEventListener('input', function (e) {
+    // This replaces any non-digit character with nothing
+    this.value = this.value.replace(/[^0-9]/g, '');
+  });
+
+  // 2. Validate length before showing OTP
+  function validatePhoneAndShowOTP() {
+    const phoneInput = document.getElementById('phone-input').value;
+
+    // Check if it's exactly 10 digits
+    if (phoneInput.length !== 10) {
+      alert("Please enter a valid 10-digit mobile number.");
+      return; // Stop the function here if invalid
+    }
+
+    // If valid, hide Step 1 and show Step 2
+    document.getElementById('otp-step-1').style.display = 'none';
+    document.getElementById('otp-step-2').style.display = 'block';
+
+    // Update the text to show the actual number they entered
+    document.getElementById('display-phone').textContent = "+91 " + phoneInput;
+
+    // Automatically put the cursor in the first OTP box
+    document.querySelectorAll('.otp-box')[0].focus();
+  }
+
+  // 3. Auto-forwarding logic for the OTP boxes
+  function otpFwd(input, idx) {
+    // Prevent typing letters in the OTP boxes
+    input.value = input.value.replace(/[^0-9]/g, '');
+    
+    // If a number was typed, move to the next box
+    if (input.value.length === 1) {
+      const boxes = document.querySelectorAll('.otp-box');
+      if (idx + 1 < boxes.length) {
+        boxes[idx + 1].focus();
+      }
+    }
+  }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HealthBridge - Patient Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="page-content">
+    <div style="background:var(--primary);padding:28px 20px 24px;">
+      <div style="color:rgba(255,255,255,.75);font-size:.95rem;font-weight:600;">Good morning,</div>
+      <div id="greeting-name" style="color:#fff;font-size:1.8rem;font-weight:900;margin-top:2px;">Guest 👋</div>
+      <div id="current-date" style="color:rgba(255,255,255,.75);font-size:.88rem;font-weight:600;margin-top:4px;">Loading Date...</div>
+    </div>
+
+    <div class="container" style="max-width:520px;padding:20px 16px;">
+
+      <div class="alert-low-stock mb-3">
+        <div class="alert-icon">⚠️</div>
+        <div class="alert-msg flex-grow-1">Check your stock levels below!</div>
+        <button class="alert-action" onclick="window.location.href='pharmacy-stores.html'">Order Now</button>
+      </div>
+
+      <div style="font-size:1.1rem;font-weight:900;color:var(--text);margin-bottom:14px;">What do you need today?</div>
+      <div class="row g-3 mb-4">
+        <div class="col-4"><button class="quick-action" onclick="window.location.href='medicine-tracker.html'"><div class="qa-icon">💊</div><div class="qa-label">My Medicines</div></button></div>
+        <div class="col-4"><button class="quick-action" onclick="window.location.href='pharmacy-stores.html'"><div class="qa-icon">🏪</div><div class="qa-label">Order Medicines</div></button></div>
+        <div class="col-4"><button class="quick-action" onclick="window.location.href='doctor-search.html'"><div class="qa-icon">🩺</div><div class="qa-label">Book Doctor</div></button></div>
+      </div>
+
+      <div style="font-size:1.1rem;font-weight:900;color:var(--text);margin-bottom:14px;">Today's Medicines</div>
+      
+      <div id="dashboard-med-list" style="display:flex;flex-direction:column;gap:12px;"></div>
+
+      <div style="font-size:1.1rem;font-weight:900;color:var(--text);margin:24px 0 14px;">Upcoming Appointment</div>
+      <div class="hb-card" style="display:flex;align-items:center;gap:14px;">
+        <div style="font-size:2rem;">📅</div>
+        <div style="flex:1;">
+          <div style="font-size:1rem;font-weight:800;">Dr. Priya Mehta</div>
+          <div style="font-size:.88rem;font-weight:600;color:var(--primary);">Cardiologist</div>
+          <div style="font-size:.85rem;font-weight:600;color:var(--muted);">Tomorrow · 11:00 AM</div>
+        </div>
+        <div style="background:var(--success-lt);color:var(--success);border-radius:50px;padding:5px 12px;font-size:.8rem;font-weight:800;">Confirmed</div>
+      </div>
+
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <button class="bn-item active" onclick="window.location.href='patient-dashboard.html'"><span class="bn-icon">🏠</span>Home</button>
+    <button class="bn-item" onclick="window.location.href='medicine-tracker.html'"><span class="bn-icon">💊</span>Medicines</button>
+    <button class="bn-item" onclick="window.location.href='pharmacy-stores.html'"><span class="bn-icon">🏪</span>Pharmacy</button>
+    <button class="bn-item" onclick="window.location.href='doctor-search.html'"><span class="bn-icon">🩺</span>Doctors</button>
+    <button class="bn-item" onclick="confirmLogout()"><span class="bn-icon">👤</span>Logout</button>
+  </nav>
+
+<script>
+  // Setup Header Details
+  const savedName = localStorage.getItem('healthBridge_patientName');
+  if (savedName) document.getElementById('greeting-name').innerHTML = savedName + " 👋";
+  document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long' });
+
+  let myMedicines = JSON.parse(localStorage.getItem('healthBridge_medicines')) || [];
+
+  function renderMedicines() {
+    const container = document.getElementById('dashboard-med-list');
+    container.innerHTML = ''; 
+
+    if (myMedicines.length === 0) {
+      container.innerHTML = '<div class="hb-card" style="text-align:center;color:var(--muted);">No medicines added yet. Go to "My Medicines" to add some!</div>';
+      return;
+    }
+
+    myMedicines.forEach(med => {
+      let stockClass = med.quantity <= 5 ? "stock-low" : "stock-ok";
+      let stockText = med.quantity <= 5 ? `⚠ Only ${med.quantity} left` : `✓ ${med.quantity} left`;
+
+      // NEW: Extract all display times and join them with a comma
+      let timeString = "As needed";
+      if (med.times && med.times.length > 0) {
+        timeString = med.times.map(t => t.displayTime).join(', ');
+      }
+
+      const card = `
+        <div class="med-card">
+          <div class="med-pill-icon">💊</div>
+          <div style="flex:1;">
+            <div class="med-name">${med.name}</div>
+            <div class="med-info">${med.frequency} · ${timeString}</div>
+            <div class="med-stock ${stockClass}" id="dash-stock-${med.id}">${stockText}</div>
+          </div>
+          <button class="btn-taken" id="dash-btn-${med.id}" onclick="markTaken(${med.id})">✓ Mark Taken</button>
+        </div>
+      `;
+      container.insertAdjacentHTML('beforeend', card);
+    });
+  }
+
+  function markTaken(medicineId) {
+    let med = myMedicines.find(m => m.id === medicineId);
+    if (med && med.quantity > 0) {
+      med.quantity -= 1; 
+      localStorage.setItem('healthBridge_medicines', JSON.stringify(myMedicines)); 
+      renderMedicines(); 
+    }
+  }
+
+  setInterval(function() {
+    const now = new Date();
+    const currentTimeString = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+    let needsSave = false;
+    
+    myMedicines.forEach(med => {
+      if (med.times) {
+        med.times.forEach(t => {
+          if (t.rawTime === currentTimeString && !t.alarmTriggered) {
+            alert(`🔔 HEALTHBRIDGE REMINDER: It is time to take your ${med.name}!`);
+            t.alarmTriggered = true;
+            needsSave = true;
+          }
+        });
+      }
+    });
+
+    if (needsSave) {
+      localStorage.setItem('healthBridge_medicines', JSON.stringify(myMedicines));
+    }
+  }, 5000);
+
+  function confirmLogout() {
+    if (confirm("Are you sure you want to log out of HealthBridge?")) {
+      localStorage.removeItem('healthBridge_patientName');
+      window.location.href = 'index.html';
+    }
+  }
+
+  // Run on page load
+  renderMedicines();
+</script>
+</body>
+</html>

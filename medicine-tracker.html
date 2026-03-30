@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HealthBridge - Medicine Tracker</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="page-content">
+    <div class="container" style="max-width:520px;padding:30px 16px;">
+      <button class="back-btn" onclick="window.location.href='patient-dashboard.html'">← Back</button>
+      <div class="page-title">My Medicines 💊</div>
+      <div class="page-sub">Track doses and stock levels</div>
+
+      <div class="section-divider">+ Add New Medicine</div>
+      <div class="hb-card mb-4">
+        <div class="mb-3">
+          <label class="hb-label">Medicine Name</label>
+          <input class="hb-input" type="text" id="med-name" placeholder="e.g. Paracetamol 500mg"/>
+        </div>
+        
+        <div class="row g-3 mb-3">
+          <div class="col-6">
+            <label class="hb-label">Total Quantity</label>
+            <input class="hb-input" type="number" id="med-qty" placeholder="30" min="1"/>
+          </div>
+          <div class="col-6">
+            <label class="hb-label">Frequency</label>
+            <select class="hb-input" id="med-freq" onchange="updateTimeInputs()">
+              <option value="Once a day">Once a day</option>
+              <option value="Twice a day">Twice a day</option>
+              <option value="Three times">Three times</option>
+              <option value="As needed">As needed</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="mb-3">
+          <label class="hb-label">Time(s) to take</label>
+          <div id="time-inputs-container" style="display:flex; gap:10px; flex-wrap: wrap;">
+            <input class="hb-input" type="time" required/>
+          </div>
+        </div>
+        
+        <button class="btn-hb-primary" onclick="addNewMedicine()">Add Medicine ✓</button>
+      </div>
+
+      <div class="section-divider">Current Medicines</div>
+      <div id="medicine-list-container" style="display:flex;flex-direction:column;gap:12px;"></div>
+
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <button class="bn-item" onclick="window.location.href='patient-dashboard.html'"><span class="bn-icon">🏠</span>Home</button>
+    <button class="bn-item active" onclick="window.location.href='medicine-tracker.html'"><span class="bn-icon">💊</span>Medicines</button>
+    <button class="bn-item" onclick="window.location.href='pharmacy-stores.html'"><span class="bn-icon">🏪</span>Pharmacy</button>
+    <button class="bn-item" onclick="window.location.href='doctor-search.html'"><span class="bn-icon">🩺</span>Doctors</button>
+    <button class="bn-item" onclick="confirmLogout()"><span class="bn-icon">👤</span>Logout</button>
+  </nav>
+
+<script>
+  let myMedicines = JSON.parse(localStorage.getItem('healthBridge_medicines')) || [];
+
+  // --- 1. Dynamic Clock Inputs Logic ---
+  function updateTimeInputs() {
+    const freq = document.getElementById('med-freq').value;
+    const container = document.getElementById('time-inputs-container');
+    
+    // Decide how many clocks we need
+    let count = 1;
+    if (freq === 'Twice a day') count = 2;
+    if (freq === 'Three times') count = 3;
+    if (freq === 'As needed') count = 0; // No clocks needed
+
+    container.innerHTML = ''; // Clear existing clocks
+    
+    // Inject the new clocks
+    for (let i = 0; i < count; i++) {
+      container.innerHTML += `<input class="hb-input" type="time" style="flex:1;" required/>`;
+    }
+    
+    if (count === 0) {
+      container.innerHTML = `<div style="font-size:.9rem; color:var(--muted); font-weight:600;">Take only when experiencing symptoms.</div>`;
+    }
+  }
+
+  // --- 2. Render UI ---
+  function renderMedicines() {
+    const container = document.getElementById('medicine-list-container');
+    container.innerHTML = ''; 
+    myMedicines.forEach(med => {
+      let stockClass = med.quantity <= 5 ? "stock-low" : "stock-ok";
+      let stockText = med.quantity <= 5 ? `⚠ Only ${med.quantity} left` : `✓ ${med.quantity} left`;
+
+      // Extract all display times and join them with a comma (e.g. "8:00 AM, 8:00 PM")
+      let timeString = "As needed";
+      if (med.times && med.times.length > 0) {
+        timeString = med.times.map(t => t.displayTime).join(', ');
+      }
+
+      const card = `
+        <div class="med-card">
+          <div class="med-pill-icon">💊</div>
+          <div style="flex:1;">
+            <div class="med-name">${med.name}</div>
+            <div class="med-info">${med.frequency} · ${timeString}</div>
+            <div class="med-stock ${stockClass}" id="stock-${med.id}">${stockText}</div>
+          </div>
+          <button class="btn-taken" onclick="markTaken(${med.id})">✓ Mark Taken</button>
+          <button class="btn-hb-danger" style="padding: 10px; font-size: 0.8rem; margin-left: 5px;" onclick="deleteMedicine(${med.id})">X</button>
+        </div>
+      `;
+      container.insertAdjacentHTML('beforeend', card);
+    });
+  }
+
+  // --- 3. Add Medicine (Upgraded for Multiple Times) ---
+  function addNewMedicine() {
+    const nameVal = document.getElementById('med-name').value.trim();
+    const qtyVal = document.getElementById('med-qty').value;
+    const freqVal = document.getElementById('med-freq').value;
+    
+    // Grab all the clock inputs we generated
+    const timeInputs = document.querySelectorAll('#time-inputs-container input[type="time"]');
+    let timesList = [];
+    let allTimesFilled = true;
+
+    timeInputs.forEach(input => {
+      if (!input.value) {
+        allTimesFilled = false;
+      } else {
+        // Convert to 12-hour AM/PM format
+        let parts = input.value.split(':');
+        let hours = parseInt(parts[0]);
+        let ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12 || 12;
+        let display = hours + ':' + parts[1] + ' ' + ampm;
+        
+        timesList.push({
+          rawTime: input.value,
+          displayTime: display,
+          alarmTriggered: false
+        });
+      }
+    });
+
+    if (!nameVal || !qtyVal || !allTimesFilled) { 
+      alert('Please fill out all fields and set all clocks.'); 
+      return; 
+    }
+
+    const newMed = {
+      id: Date.now(),
+      name: nameVal,
+      quantity: parseInt(qtyVal),
+      frequency: freqVal,
+      times: timesList // We now save an array of times!
+    };
+
+    myMedicines.push(newMed);
+    localStorage.setItem('healthBridge_medicines', JSON.stringify(myMedicines)); 
+    
+    renderMedicines(); 
+    
+    // Reset Form
+    document.getElementById('med-name').value = '';
+    document.getElementById('med-qty').value = '';
+    document.getElementById('med-freq').value = 'Once a day';
+    updateTimeInputs(); // Reset clocks back to 1
+  }
+
+  // --- 4. Inventory Math ---
+  function markTaken(medicineId) {
+    let med = myMedicines.find(m => m.id === medicineId);
+    if (med && med.quantity > 0) {
+      med.quantity -= 1; 
+      localStorage.setItem('healthBridge_medicines', JSON.stringify(myMedicines)); 
+      renderMedicines(); 
+    }
+  }
+
+  function deleteMedicine(medicineId) {
+    if (confirm("Remove this medicine?")) {
+      myMedicines = myMedicines.filter(m => m.id !== medicineId);
+      localStorage.setItem('healthBridge_medicines', JSON.stringify(myMedicines));
+      renderMedicines();
+    }
+  }
+
+  // --- 5. Multi-Alarm System ---
+  setInterval(function() {
+    const now = new Date();
+    const currentTimeString = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+    let needsSave = false;
+
+    myMedicines.forEach(med => {
+      if (med.times) {
+        med.times.forEach(t => {
+          if (t.rawTime === currentTimeString && !t.alarmTriggered) {
+            alert(`🔔 HEALTHBRIDGE REMINDER: It is time to take your ${med.name}!`);
+            t.alarmTriggered = true;
+            needsSave = true;
+          }
+        });
+      }
+    });
+
+    if (needsSave) {
+      localStorage.setItem('healthBridge_medicines', JSON.stringify(myMedicines));
+    }
+  }, 5000);
+
+  function confirmLogout() {
+    if (confirm("Are you sure you want to log out of HealthBridge?")) {
+      localStorage.removeItem('healthBridge_patientName');
+      window.location.href = 'index.html';
+    }
+  }
+
+  renderMedicines();
+</script>
+</body>
+</html>

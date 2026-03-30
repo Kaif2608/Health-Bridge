@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HealthBridge - Setup Profile</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="container" style="max-width:480px; padding:30px 20px 60px;">
+    <div class="logo-bar"><div class="logo-mark">✚</div><div class="logo-name">HealthBridge</div></div>
+
+    <div style="padding:20px 4px 0;">
+      <div class="page-title">Welcome to HealthBridge!</div>
+      <div class="page-sub">Let's set up your patient profile quickly.</div>
+
+      <div class="hb-card" style="margin-top:24px;">
+        <div style="font-size:2.5rem;text-align:center;margin-bottom:20px;">👋</div>
+
+        <div class="mb-3">
+          <label class="hb-label">Full Name</label>
+          <input class="hb-input" type="text" id="patient-name" placeholder="e.g. Ramesh Kumar"/>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-6">
+            <label class="hb-label">Age</label>
+            <input class="hb-input" type="number" id="patient-age" placeholder="e.g. 45" min="1" max="120"/>
+          </div>
+          <div class="col-6">
+            <label class="hb-label">Gender</label>
+            <select class="hb-input" id="patient-gender">
+              <option value="">Select...</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="hb-label">Blood Group (Optional)</label>
+          <select class="hb-input" id="patient-blood">
+            <option value="">Select...</option>
+            <option value="A+">A+</option>
+            <option value="O+">O+</option>
+            <option value="B+">B+</option>
+            <option value="AB+">AB+</option>
+            <option value="A-">A-</option>
+            <option value="O-">O-</option>
+            <option value="B-">B-</option>
+            <option value="AB-">AB-</option>
+          </select>
+        </div>
+
+        <button class="btn-hb-primary" onclick="saveProfile()">Save & Continue →</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  function saveProfile() {
+    // 1. Grab the values the user typed in
+    const name = document.getElementById('patient-name').value.trim();
+    const age = document.getElementById('patient-age').value;
+    const gender = document.getElementById('patient-gender').value;
+
+    // 2. Validate the form to ensure they didn't leave anything blank
+    if (!name) {
+      alert("Please enter your full name.");
+      return;
+    }
+    if (!age || age <= 0 || age > 120) {
+      alert("Please enter a valid age.");
+      return;
+    }
+    if (!gender) {
+      alert("Please select your gender.");
+      return;
+    }
+
+    // 3. Save the name to the browser's local storage!
+    localStorage.setItem('healthBridge_patientName', name);
+
+    // 4. Move them to the dashboard
+    window.location.href = 'patient-dashboard.html';
+  }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
