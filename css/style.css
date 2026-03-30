@@ -1,0 +1,385 @@
+
+/* ============================================================
+   GLOBAL — Elderly-first: large text, high contrast, minimal
+   ============================================================ */
+:root {
+  --primary:   #0b7a6e;
+  --primary-lt:#e6f7f5;
+  --primary-dk:#075c53;
+  --accent:    #f4a234;
+  --danger:    #d93636;
+  --danger-lt: #fdeaea;
+  --success:   #1a8a4a;
+  --success-lt:#e8f9f0;
+  --text:      #1a1a1a;
+  --muted:     #5a6a68;
+  --border:    #d0e4e1;
+  --bg:        #f4f9f8;
+  --white:     #ffffff;
+  --radius:    16px;
+  --shadow:    0 4px 24px rgba(11,122,110,.10);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  font-size: 17px; /* min 16px per brief */
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── Screens ── */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ── Logo bar ── */
+.logo-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 18px 20px 0;
+}
+.logo-mark {
+  width: 40px; height: 40px; border-radius: 12px;
+  background: var(--primary); color: #fff;
+  font-size: 1.3rem; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+}
+.logo-name { font-size: 1.35rem; font-weight: 900; color: var(--primary); }
+
+/* ── Back btn ── */
+.back-btn {
+  background: none; border: none; color: var(--muted);
+  font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 700;
+  cursor: pointer; padding: 10px 0; display: flex; align-items: center; gap: 6px;
+}
+.back-btn:hover { color: var(--primary); }
+
+/* ── Headings ── */
+.page-title   { font-size: 1.8rem; font-weight: 900; color: var(--text); }
+.page-sub     { font-size: 1rem;   font-weight: 600; color: var(--muted); margin-top: 4px; }
+
+/* ── Card ── */
+.hb-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  padding: 28px 24px;
+}
+
+/* ── Buttons ── */
+.btn-hb-primary {
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 50px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.1rem; font-weight: 800;
+  padding: 15px 28px; width: 100%;
+  cursor: pointer; transition: all .2s;
+  box-shadow: 0 4px 16px rgba(11,122,110,.25);
+}
+.btn-hb-primary:hover { background: var(--primary-dk); transform: translateY(-2px); }
+
+.btn-hb-outline {
+  background: transparent; color: var(--primary);
+  border: 2.5px solid var(--primary); border-radius: 50px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.1rem; font-weight: 800;
+  padding: 13px 28px; width: 100%;
+  cursor: pointer; transition: all .2s;
+}
+.btn-hb-outline:hover { background: var(--primary-lt); }
+
+.btn-hb-danger {
+  background: var(--danger); color: #fff;
+  border: none; border-radius: 50px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem; font-weight: 800;
+  padding: 12px 24px; cursor: pointer;
+}
+.btn-hb-success {
+  background: var(--success); color: #fff;
+  border: none; border-radius: 50px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem; font-weight: 800;
+  padding: 12px 24px; cursor: pointer;
+}
+
+/* ── Form inputs ── */
+.hb-label {
+  font-size: .9rem; font-weight: 800; color: var(--text);
+  margin-bottom: 6px; display: block; letter-spacing: .02em;
+  text-transform: uppercase;
+}
+.hb-input {
+  width: 100%; padding: 15px 16px; border-radius: 12px;
+  border: 2px solid var(--border);
+  font-family: 'Nunito', sans-serif; font-size: 1.05rem; font-weight: 600;
+  color: var(--text); background: #fff; outline: none;
+  transition: border .2s, box-shadow .2s;
+}
+.hb-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(11,122,110,.10);
+}
+.hb-input::placeholder { color: #aabfbc; }
+
+select.hb-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%230b7a6e' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+}
+
+/* ── Alert box ── */
+.alert-low-stock {
+  background: var(--danger-lt);
+  border: 2px solid var(--danger);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  display: flex; align-items: center; gap: 14px;
+}
+.alert-low-stock .alert-icon { font-size: 2rem; }
+.alert-low-stock .alert-msg  { font-size: 1.05rem; font-weight: 700; color: var(--danger); line-height: 1.4; }
+.alert-low-stock .alert-action {
+  background: var(--danger); color: #fff; border: none;
+  border-radius: 50px; padding: 10px 18px;
+  font-family: 'Nunito', sans-serif; font-weight: 800; font-size: .9rem;
+  cursor: pointer; white-space: nowrap; flex-shrink: 0;
+}
+
+/* ── Quick action buttons ── */
+.quick-action {
+  background: var(--white); border: 2px solid var(--border);
+  border-radius: var(--radius); padding: 22px 16px;
+  text-align: center; cursor: pointer;
+  transition: all .22s; display: flex; flex-direction: column;
+  align-items: center; gap: 10px; width: 100%;
+}
+.quick-action:hover { border-color: var(--primary); box-shadow: var(--shadow); transform: translateY(-3px); }
+.quick-action .qa-icon { font-size: 2.2rem; }
+.quick-action .qa-label { font-size: 1rem; font-weight: 800; color: var(--text); }
+
+/* ── Nav bar (bottom, mobile-first) ── */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--white); border-top: 1px solid var(--border);
+  display: flex; z-index: 100;
+}
+.bn-item {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  padding: 10px 4px; cursor: pointer; font-size: .7rem; font-weight: 800;
+  color: var(--muted); gap: 3px; transition: color .2s; border: none; background: none;
+}
+.bn-item.active { color: var(--primary); }
+.bn-item .bn-icon { font-size: 1.5rem; }
+
+/* ── Medicine card ── */
+.med-card {
+  background: var(--white); border-radius: var(--radius);
+  border: 1.5px solid var(--border); padding: 18px 20px;
+  display: flex; align-items: center; gap: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.05);
+}
+.med-pill-icon {
+  width: 52px; height: 52px; border-radius: 14px;
+  background: var(--primary-lt); display: flex; align-items: center;
+  justify-content: center; font-size: 1.5rem; flex-shrink: 0;
+}
+.med-name  { font-size: 1.05rem; font-weight: 800; color: var(--text); }
+.med-info  { font-size: .85rem; font-weight: 600; color: var(--muted); margin-top: 2px; }
+.med-stock { font-size: .85rem; font-weight: 800; }
+.stock-ok  { color: var(--success); }
+.stock-low { color: var(--danger); }
+
+.btn-taken {
+  background: var(--success); color: #fff; border: none;
+  border-radius: 50px; padding: 10px 16px;
+  font-family: 'Nunito', sans-serif; font-weight: 800; font-size: .85rem;
+  cursor: pointer; flex-shrink: 0;
+}
+.btn-taken:disabled { background: #ccc; }
+
+/* ── Pharmacy store card ── */
+.store-card {
+  background: var(--white); border-radius: var(--radius);
+  border: 1.5px solid var(--border); padding: 18px 20px;
+  display: flex; align-items: center; gap: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.05);
+}
+.store-icon {
+  width: 52px; height: 52px; border-radius: 14px;
+  background: #fff4e6; font-size: 1.5rem;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+/* ── Doctor card ── */
+.doc-card {
+  background: var(--white); border-radius: var(--radius);
+  border: 1.5px solid var(--border); padding: 18px 20px;
+  display: flex; align-items: center; gap: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.05);
+  cursor: pointer; transition: all .2s;
+}
+.doc-card:hover { border-color: var(--primary); box-shadow: var(--shadow); }
+.doc-avatar {
+  width: 58px; height: 58px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), #12b8a8);
+  color: #fff; font-weight: 900; font-size: 1.3rem;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.doc-name   { font-size: 1.05rem; font-weight: 800; color: var(--text); }
+.doc-spec   { font-size: .85rem; font-weight: 600; color: var(--primary); margin-top: 2px; }
+.doc-meta   { font-size: .8rem;  font-weight: 600; color: var(--muted); }
+.rating     { color: var(--accent); font-size: .85rem; font-weight: 800; }
+
+/* ── Time slot grid ── */
+.slot-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+.slot-btn {
+  padding: 10px 16px; border-radius: 50px;
+  border: 2px solid var(--border); background: #fff;
+  font-family: 'Nunito', sans-serif; font-weight: 700; font-size: .9rem;
+  cursor: pointer; transition: all .2s; color: var(--text);
+}
+.slot-btn:hover, .slot-btn.selected {
+  background: var(--primary); color: #fff; border-color: var(--primary);
+}
+.slot-btn.booked { background: #f0f0f0; color: #bbb; cursor: not-allowed; border-color: #e0e0e0; }
+
+/* ── Progress steps ── */
+.progress-steps { display: flex; align-items: center; gap: 0; margin: 20px 0; }
+.ps-step {
+  display: flex; flex-direction: column; align-items: center; flex: 1;
+}
+.ps-circle {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: .9rem; transition: all .3s;
+}
+.ps-label { font-size: .7rem; font-weight: 700; margin-top: 5px; text-align: center; }
+.ps-line  { flex: 1; height: 3px; background: var(--border); margin-top: -18px; }
+.ps-done  .ps-circle { background: var(--primary); color: #fff; }
+.ps-active.ps-circle { background: var(--primary); color: #fff; }
+.ps-pend  .ps-circle { background: var(--border); color: var(--muted); }
+
+/* ── File upload ── */
+.file-zone {
+  border: 2.5px dashed var(--border); border-radius: var(--radius);
+  padding: 24px; text-align: center; cursor: pointer;
+  background: #fafcfb; transition: all .2s;
+}
+.file-zone:hover { border-color: var(--primary); background: var(--primary-lt); }
+.file-zone .fz-icon { font-size: 2rem; margin-bottom: 8px; }
+.file-zone .fz-text { font-size: .9rem; font-weight: 600; color: var(--muted); }
+.file-zone .fz-text strong { color: var(--primary); }
+
+/* ── Status badge ── */
+.badge-pending { background: #fff4e0; color: #b87700; border: 1.5px solid #f4c060; border-radius: 50px; padding: 5px 14px; font-size: .8rem; font-weight: 800; }
+.badge-active  { background: var(--success-lt); color: var(--success); border: 1.5px solid #90d4b0; border-radius: 50px; padding: 5px 14px; font-size: .8rem; font-weight: 800; }
+
+/* ── Section divider ── */
+.section-divider {
+  font-size: .75rem; font-weight: 900; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--primary);
+  border-bottom: 2px solid var(--primary-lt); padding-bottom: 8px;
+  margin-bottom: 16px; margin-top: 24px;
+}
+
+/* ── Dashboard widgets ── */
+.stat-box {
+  background: var(--white); border-radius: var(--radius);
+  border: 1.5px solid var(--border); padding: 20px;
+  text-align: center;
+}
+.stat-num  { font-size: 2.2rem; font-weight: 900; color: var(--primary); }
+.stat-lbl  { font-size: .85rem; font-weight: 700; color: var(--muted); }
+
+/* ── OTP inputs ── */
+.otp-row { display: flex; gap: 10px; justify-content: center; }
+.otp-box {
+  width: 52px; height: 58px; border-radius: 12px;
+  border: 2px solid var(--border); text-align: center;
+  font-family: 'Nunito', sans-serif; font-size: 1.6rem; font-weight: 800;
+  color: var(--primary); outline: none; transition: border .2s;
+}
+.otp-box:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(11,122,110,.10); }
+
+/* ── Admin table ── */
+.admin-table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+.admin-table th { background: var(--primary-lt); color: var(--primary); font-weight: 800; padding: 12px 14px; text-align: left; }
+.admin-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.admin-table tr:last-child td { border-bottom: none; }
+
+/* ── Calendar ── */
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.cal-day-head { text-align: center; font-size: .75rem; font-weight: 800; color: var(--muted); padding: 4px 0; }
+.cal-day {
+  aspect-ratio: 1; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .9rem; font-weight: 700; cursor: pointer;
+  transition: all .15s; color: var(--text);
+}
+.cal-day:hover { background: var(--primary-lt); }
+.cal-day.today { background: var(--primary); color: #fff; }
+.cal-day.has-appt { border: 2px solid var(--accent); }
+.cal-day.empty { cursor: default; }
+
+/* ── Scrollable content above bottom nav ── */
+.page-content { padding-bottom: 90px; }
+
+/* ── Vendor dash order card ── */
+.order-card {
+  background: var(--white); border-radius: var(--radius);
+  border: 1.5px solid var(--border); padding: 18px 20px;
+}
+.order-num  { font-size: .8rem; font-weight: 800; color: var(--muted); }
+.order-name { font-size: 1.05rem; font-weight: 800; color: var(--text); }
+.order-items{ font-size: .9rem; font-weight: 600; color: var(--muted); }
+
+/* ── Waiting screen ── */
+.waiting-icon-wrap {
+  width: 100px; height: 100px; border-radius: 50%;
+  background: #fff8e6; border: 3px solid var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.8rem; margin: 0 auto 20px;
+  animation: bob 2.5s ease-in-out infinite;
+}
+@keyframes bob { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
+
+/* ── Link text ── */
+.link-text { color: var(--primary); font-weight: 700; cursor: pointer; font-size: .95rem; }
+.link-text:hover { text-decoration: underline; }
+
+/* ── Role cards on landing ── */
+.role-card-big {
+  background: var(--white); border-radius: var(--radius);
+  border: 2px solid var(--border); padding: 24px 20px;
+  cursor: pointer; transition: all .25s; display: flex; align-items: center; gap: 18px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.04);
+}
+.role-card-big:hover {
+  border-color: var(--primary); box-shadow: 0 6px 24px rgba(11,122,110,.15);
+  transform: translateY(-3px);
+}
+.role-card-big.primary-role { border-color: var(--primary); background: var(--primary-lt); }
+.role-big-icon {
+  width: 60px; height: 60px; border-radius: 16px;
+  display: flex; align-items: center; justify-content: center; font-size: 1.8rem; flex-shrink: 0;
+}
+.role-big-title { font-size: 1.15rem; font-weight: 900; color: var(--text); }
+.role-big-desc  { font-size: .88rem; font-weight: 600; color: var(--muted); margin-top: 3px; }
+
+/* ── Appointment status steps ── */
+.status-trail { display: flex; flex-direction: column; gap: 0; }
+.st-item { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+.st-item:last-child { border-bottom: none; }
+.st-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .9rem; flex-shrink: 0; }
+.st-icon.done   { background: var(--success-lt); color: var(--success); }
+.st-icon.active { background: #fff4e0; color: var(--accent); }
+.st-icon.pend   { background: #f0f0f0; color: #bbb; }
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .hb-card { padding: 22px 16px; }
+  .page-title { font-size: 1.5rem; }
+}
